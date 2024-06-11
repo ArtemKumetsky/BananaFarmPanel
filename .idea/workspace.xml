@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="79e6f696-9003-4ee4-afa2-e49c51f7ed0c" name="Changes" comment="Initialized">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/game_launched.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/game_launched.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/login/login_btn.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/login/login_btn.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/login/sda_request.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/login/sda_request.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/login/steam_logged_in.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/login/steam_logged_in.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/logout_confirm_btn.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/logout_confirm_btn.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/steam_logout_btn.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/steam_logout_btn.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/steam_menu.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/steam_menu.png" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2hkLBFf9VZBJet321KgEAThRM9q" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-PY-241.15989.155" />
+        <option value="bundled-python-sdk-babbdf50b680-7c6932dee5e4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.15989.155" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="79e6f696-9003-4ee4-afa2-e49c51f7ed0c" name="Changes" comment="" />
+      <created>1718132990574</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1718132990574</updated>
+      <workItem from="1718132991925" duration="17000" />
+      <workItem from="1718133050053" duration="210000" />
+      <workItem from="1718133298068" duration="635000" />
+      <workItem from="1718133952544" duration="295000" />
+    </task>
+    <task id="LOCAL-00001" summary="Initialized">
+      <option name="closed" value="true" />
+      <created>1718133152563</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1718133152563</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Initialized">
+      <option name="closed" value="true" />
+      <created>1718133349128</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1718133349128</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Initialized">
+      <option name="closed" value="true" />
+      <created>1718133461523</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1718133461523</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initialized" />
+    <option name="LAST_COMMIT_MESSAGE" value="Initialized" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/BananaPanel$main.coverage" NAME="main Coverage Results" MODIFIED="1718134182950" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>
