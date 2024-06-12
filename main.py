@@ -1,8 +1,23 @@
 import json
+import logging
+import threading
+
 import pyautogui
 import time
 import subprocess
 from steam.guard import SteamAuthenticator
+
+# logs creation
+logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s',
+                    level=logging.DEBUG)
+
+print(
+    "Я слишком ленив, чтобы пилить сервер авторизации, потому просто знай - если ты это спиздил"
+    " или где-то достал бесплатно, то хоть ключик какой-то мне закинь, не будь гнидой.")
+print("Я тоже кушать хочу хоть иногда!")
+print("TG: @jabablet")
+print("А если купил, то целую в щёчку (без гейства)")
+print("Вот теперь за работу!")
 
 
 # read accounts data from logpass.txt and add them to temporary array
@@ -26,9 +41,11 @@ with open('settings.json', 'r') as f:
     config = json.load(f)
 
 steam_path = config['steam_path']
-
-
 game_id = "2923300"
+global steam_window, counter, terminate_timer, process_ids
+process_ids = {}
+counter: int = 0
+terminate_timer = config['terminate_timer']
 
 
 def get_steam_guard_code(mafile_path):
@@ -39,13 +56,32 @@ def get_steam_guard_code(mafile_path):
     return authenticator.get_code()
 
 
+def find(image_path, timeout):
+    print("looking for some sheet...")
+    try:
+        location = pyautogui.locateOnScreen(image_path, timeout)
+        if location is not None:
+            pyautogui.click(pyautogui.center(location))
+    except Exception as e:
+        print(f"Sheet is not detected! {e}")
+
+
+def delayed_kill(account):
+    pid = process_ids.get(account['login'])
+    print("Termination timer started, acc will be killed in " + str(terminate_timer) + " seconds")
+    time.sleep(terminate_timer)
+    subprocess.run(["taskkill", "/F", "/PID", str(pid)], check=True)
+    print(f"{account['login']} termination done!")
+
+
 def login_and_launch_game(account):
     print(f"Launching {account['login']}")
     # get SDA code
     auth_code = get_steam_guard_code(account["mafile_path"])
 
     # Launch steam
-    subprocess.Popen([steam_path])
+    steam_window = subprocess.Popen([steam_path, "-applaunch", game_id])
+    process_ids[account['login']] = steam_window.pid
     pyautogui.locateOnScreen("assets/login/login_btn.png", 300)
     print(f"{account['login']}: Steam launched!")
 
@@ -61,42 +97,52 @@ def login_and_launch_game(account):
     # enter SDA code
     pyautogui.write(auth_code)
     pyautogui.press("enter")
+
+    # check EULA
+    find("assets/friends_window_close_btn.png", 10)
+    time.sleep(1)
+    find("assets/accept_eula.png", 3)
+
+    # continue
     pyautogui.locateOnScreen("assets/login/steam_logged_in.png", 300)
     print(f"{account['login']}: Logged into account!")
 
-    # Запуск игры
-    subprocess.Popen([steam_path, "-applaunch", game_id])
+    # Confirm cloud error
+    time.sleep(2)
+    pyautogui.press("enter")
+
+    # close steam window
+    time.sleep(2)
+    pyautogui.click(pyautogui.locateCenterOnScreen("assets/close_steam_window.png"))
+
+    # Check game launch
     pyautogui.locateOnScreen("assets/game_launched.png", 300)
     print(f"{account['login']}: Game launched!")
 
+    pyautogui.click(pyautogui.locateCenterOnScreen("assets/minimize_game.png"))
+
+    # close advert windows
+    find("assets/avdert_close_btn.png", 3)
+    find("assets/avdert_close_btn.png", 3)
+
+    if terminate_timer > 0:
+        # start terminate timer
+        threading.Thread(target=delayed_kill, args=(account,)).start()
 
     # close steam
-    # subprocess.call("taskkill /f /im steam.exe", shell=True)
+    # subprocess.call("taskkill /f /im gameoverlayui.exe", True)
+    # print(f"{account['login']}: Game overlay closed!")
 
 
-def logout_from_account():
-    # Находим и нажимаем на кнопку Steam в верхнем левом углу
-    logout_steam_menu = pyautogui.locateCenterOnScreen('assets/steam_menu.png')
-    pyautogui.click(logout_steam_menu, duration=0.5)
+while True:
+    for account in accounts:
+        try:
+            login_and_launch_game(account)
+            counter = counter + 1
+            print("\naccounts launched: " + str(counter))
+            time.sleep(3)
+        except Exception as e:
+            logging.error(f"Error in main function: {e}")
 
-    # Пауза перед нажатием клавиши "Выйти"
-    time.sleep(2)
-
-    # Находим и нажимаем на кнопку "Выйти"
-    logout_button_location = pyautogui.locateOnScreen('assets/steam_logout_btn.png')
-    if logout_button_location is not None:
-        logout_button_x, logout_button_y = pyautogui.center(logout_button_location)
-        pyautogui.click(logout_button_x, logout_button_y, duration=0.5)
-        print("Успешно вышли из аккаунта.")
-    else:
-        print("Ошибка: Не удалось найти кнопку 'Выйти из аккаунта'.")
-
-# main cycle
-for account in accounts:
-    login_and_launch_game(account)
-    time.sleep(5)
-    # logout_from_account()
-
-
-#compile
+# compile
 # pyinstaller main.py --onefile

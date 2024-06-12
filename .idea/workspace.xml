@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="79e6f696-9003-4ee4-afa2-e49c51f7ed0c" name="Changes" comment="Initialized">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/game_launched.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/game_launched.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/login/login_btn.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/login/login_btn.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/login/sda_request.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/login/sda_request.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/login/steam_logged_in.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/login/steam_logged_in.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/logout_confirm_btn.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/logout_confirm_btn.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/steam_logout_btn.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/steam_logout_btn.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/steam_menu.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/steam_menu.png" afterDir="false" />
+    <list default="true" id="79e6f696-9003-4ee4-afa2-e49c51f7ed0c" name="Changes" comment="Many bug fixes and added terminate_timer">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IF_NOT_WORKS.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/IF_NOT_WORKS.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,6 +22,9 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GithubDefaultAccount">
+    <option name="defaultAccountId" value="9690cf74-cae4-4bf2-a181-30462fc98c52" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -36,21 +34,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "Python.main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "E:/Users/Farmer/Desktop/RAW&DEBUG/BananaPanel/BananaPanel",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -70,7 +70,11 @@
       <workItem from="1718132991925" duration="17000" />
       <workItem from="1718133050053" duration="210000" />
       <workItem from="1718133298068" duration="635000" />
-      <workItem from="1718133952544" duration="295000" />
+      <workItem from="1718133952544" duration="355000" />
+      <workItem from="1718140280854" duration="2185000" />
+      <workItem from="1718145019544" duration="120000" />
+      <workItem from="1718203224515" duration="1182000" />
+      <workItem from="1718205680497" duration="741000" />
     </task>
     <task id="LOCAL-00001" summary="Initialized">
       <option name="closed" value="true" />
@@ -96,7 +100,23 @@
       <option name="project" value="LOCAL" />
       <updated>1718133461523</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="fixed some sheet">
+      <option name="closed" value="true" />
+      <created>1718134279597</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1718134279597</updated>
+    </task>
+    <task id="LOCAL-00005" summary="fixed some sheet">
+      <option name="closed" value="true" />
+      <created>1718134289396</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1718134289396</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -127,9 +147,11 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initialized" />
-    <option name="LAST_COMMIT_MESSAGE" value="Initialized" />
+    <MESSAGE value="fixed some sheet" />
+    <MESSAGE value="Many bug fixes and added terminate_timer" />
+    <option name="LAST_COMMIT_MESSAGE" value="Many bug fixes and added terminate_timer" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/BananaPanel$main.coverage" NAME="main Coverage Results" MODIFIED="1718134182950" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/BananaPanel$main.coverage" NAME="main Coverage Results" MODIFIED="1718203772314" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
