@@ -1,3 +1,4 @@
 {
-  "steam_path": "E:\\Farm\\Steam\\steam.exe"
+  "steam_path": "C:\\Farm\\Steam\\steam.exe",
+  "terminate_timer": 240
 }
