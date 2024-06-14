@@ -5,6 +5,7 @@ import pyautogui
 import time
 import subprocess
 from steam.guard import SteamAuthenticator
+import uuid
 
 # logs creation
 logging.basicConfig(filename='panel.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s',
@@ -112,8 +113,10 @@ def login_and_launch_game(account):
         pyautogui.locateOnScreen("assets/login/steam_logged_in.png", 300)
         print(f"{account['login']}: Logged into account!")
 
+        # check cloud sync fail notification
+        find("assets/notifications/sync_failed.png", 10)
+
         # close steam window
-        time.sleep(2)
         find("assets/close_steam_window.png", 30)
 
         # Check game launch
