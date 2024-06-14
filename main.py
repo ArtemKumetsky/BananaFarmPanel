@@ -6,19 +6,43 @@ import time
 import subprocess
 from steam.guard import SteamAuthenticator
 import uuid
+import firebase_admin
+from firebase_admin import credentials, firestore
+
+#connect firebase for check HWID
+cred = credentials.Certificate("SDK/bananapanel-firebase-adminsdk.json")
+firebase_admin.initialize_app(cred)
+
+db = firestore.client()
 
 # logs creation
 logging.basicConfig(filename='panel.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.DEBUG)
 
-print(
-    "Я слишком ленив, чтобы пилить сервер авторизации, потому просто знай - если ты это спиздил"
-    " или где-то достал бесплатно, то хоть ключик какой-то мне закинь, не будь гнидой.")
-print("Я тоже кушать хочу хоть иногда!")
-print("TG: @jabablet")
-print("А если купил, то целую в щёчку (без гейства)")
-print("Вот теперь за работу!")
 
+def getHWID():
+    hwid = hex(uuid.getnode())
+    return hwid
+
+
+def is_hwid_allowed(hwid):
+    doc_ref = db.collection('allowed_hwids').document(hwid)
+    doc = doc_ref.get()
+    return doc.exists
+
+
+def checkHWID():
+    hwid = getHWID()
+    if is_hwid_allowed(hwid):
+        print("HWID successfully checked! Launching program...")
+    else:
+        print("Error: HWID is unregistered. Please contact TG @jabablet !")
+        print("Your current HWID: " + hwid)
+        time.sleep(30)
+        exit(1)
+
+
+checkHWID()
 
 # read accounts data from logpass.txt and add them to temporary array
 def read_accounts(file_path):
