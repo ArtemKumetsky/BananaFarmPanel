@@ -1,14 +1,13 @@
 import json
 import logging
 import threading
-
 import pyautogui
 import time
 import subprocess
 from steam.guard import SteamAuthenticator
 
 # logs creation
-logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s',
+logging.basicConfig(filename='panel.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.DEBUG)
 
 print(
@@ -46,6 +45,7 @@ global steam_window, counter, terminate_timer, process_ids
 process_ids = {}
 counter: int = 0
 terminate_timer = config['terminate_timer']
+steam_launch_attributes = config['steam_launch_attributes']
 
 
 def get_steam_guard_code(mafile_path):
@@ -57,13 +57,14 @@ def get_steam_guard_code(mafile_path):
 
 
 def find(image_path, timeout):
-    print("looking for some sheet...")
+    print(f"looking for {image_path}...")
     try:
         location = pyautogui.locateOnScreen(image_path, timeout)
         if location is not None:
             pyautogui.click(pyautogui.center(location))
+            print(f"{image_path} found! Closing...")
     except Exception as e:
-        print(f"Sheet is not detected! {e}")
+        print(f"{image_path} not detected! {e}")
 
 
 def delayed_kill(account):
@@ -75,63 +76,58 @@ def delayed_kill(account):
 
 
 def login_and_launch_game(account):
-    print(f"Launching {account['login']}")
-    # get SDA code
-    auth_code = get_steam_guard_code(account["mafile_path"])
+    try:
+        print(f"Launching {account['login']}")
+        # get SDA code
+        auth_code = get_steam_guard_code(account["mafile_path"])
 
-    # Launch steam
-    steam_window = subprocess.Popen([steam_path, "-applaunch", game_id])
-    process_ids[account['login']] = steam_window.pid
-    pyautogui.locateOnScreen("assets/login/login_btn.png", 300)
-    print(f"{account['login']}: Steam launched!")
+        # Launch steam
+        steam_window = subprocess.Popen([steam_path, "-applaunch", game_id] + steam_launch_attributes)
+        process_ids[account['login']] = steam_window.pid
 
-    # enter login
-    pyautogui.write(account["login"])
-    pyautogui.press("tab")
+        # wait till steam launched
+        pyautogui.locateOnScreen("assets/login/steam_launched.png", 300)
+        print(f"{account['login']}: Steam launched!")
 
-    # enter password
-    pyautogui.write(account["password"])
-    pyautogui.press("enter")
-    pyautogui.locateOnScreen("assets/login/sda_request.png", 300)
+        # enter login
+        pyautogui.write(account["login"])
+        pyautogui.press("tab")
 
-    # enter SDA code
-    pyautogui.write(auth_code)
-    pyautogui.press("enter")
+        # enter password
+        pyautogui.write(account["password"])
+        pyautogui.press("enter")
+        pyautogui.locateOnScreen("assets/login/sda_request.png", 300)
 
-    # check EULA
-    find("assets/friends_window_close_btn.png", 10)
-    time.sleep(1)
-    find("assets/accept_eula.png", 3)
+        # enter SDA code
+        pyautogui.write(auth_code)
+        pyautogui.press("enter")
 
-    # continue
-    pyautogui.locateOnScreen("assets/login/steam_logged_in.png", 300)
-    print(f"{account['login']}: Logged into account!")
+        # check game ban notification
+        find("assets/notifications/game_ban_window_close.png", 10)
 
-    # Confirm cloud error
-    time.sleep(2)
-    pyautogui.press("enter")
+        # check EULA
+        find("assets/notifications/accept_eula.png", 10)
 
-    # close steam window
-    time.sleep(2)
-    pyautogui.click(pyautogui.locateCenterOnScreen("assets/close_steam_window.png"))
+        # continue
+        pyautogui.locateOnScreen("assets/login/steam_logged_in.png", 300)
+        print(f"{account['login']}: Logged into account!")
 
-    # Check game launch
-    pyautogui.locateOnScreen("assets/game_launched.png", 300)
-    print(f"{account['login']}: Game launched!")
+        # close steam window
+        time.sleep(2)
+        find("assets/close_steam_window.png", 30)
 
-    pyautogui.click(pyautogui.locateCenterOnScreen("assets/minimize_game.png"))
+        # Check game launch
+        pyautogui.locateOnScreen("assets/game_launched.png", 300)
+        print(f"{account['login']}: Game launched!")
 
-    # close advert windows
-    find("assets/avdert_close_btn.png", 3)
-    find("assets/avdert_close_btn.png", 3)
+        # minimize game
+        find("assets/minimize_game.png", 300)
 
-    if terminate_timer > 0:
-        # start terminate timer
-        threading.Thread(target=delayed_kill, args=(account,)).start()
-
-    # close steam
-    # subprocess.call("taskkill /f /im gameoverlayui.exe", True)
-    # print(f"{account['login']}: Game overlay closed!")
+        # start terminate timer if it enabled in settings.json
+        if terminate_timer > 0:
+            threading.Thread(target=delayed_kill, args=(account,)).start()
+    except Exception as e:
+        logging.error(f"Error in main function: {e}")
 
 
 while True:
@@ -142,7 +138,7 @@ while True:
             print("\naccounts launched: " + str(counter))
             time.sleep(3)
         except Exception as e:
-            logging.error(f"Error in main function: {e}")
+            logging.error(f"Error in main cycle: {e}")
 
 # compile
 # pyinstaller main.py --onefile

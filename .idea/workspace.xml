@@ -4,9 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="79e6f696-9003-4ee4-afa2-e49c51f7ed0c" name="Changes" comment="Many bug fixes and added terminate_timer">
+    <list default="true" id="79e6f696-9003-4ee4-afa2-e49c51f7ed0c" name="Changes" comment="New files">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/IF_NOT_WORKS.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/IF_NOT_WORKS.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.log" beforeDir="false" afterPath="$PROJECT_DIR$/app.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/main/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/main/Analysis-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/main/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/main/EXE-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/main/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/main/PKG-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/main/PYZ-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/main/PYZ-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/main/Tree-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/main/Tree-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/main/Tree-01.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/main/Tree-01.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/main/Tree-02.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/main/Tree-02.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/main/main.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/build/main/main.pkg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/main/warn-main.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/main/warn-main.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/main/xref-main.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/main/xref-main.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -41,7 +51,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "E:/Users/Farmer/Desktop/RAW&DEBUG/BananaPanel/BananaPanel",
+    "last_opened_file_path": "C:/Users/Farmer/Desktop/RAW&DEBUG/BananaPanel",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -54,8 +64,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-PY-241.15989.155" />
-        <option value="bundled-python-sdk-babbdf50b680-7c6932dee5e4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.15989.155" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-PY-241.17890.14" />
+        <option value="bundled-python-sdk-5b207ade9991-7e9c3bbb6e34-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.17890.14" />
       </set>
     </attachedChunks>
   </component>
@@ -74,7 +84,9 @@
       <workItem from="1718140280854" duration="2185000" />
       <workItem from="1718145019544" duration="120000" />
       <workItem from="1718203224515" duration="1182000" />
-      <workItem from="1718205680497" duration="741000" />
+      <workItem from="1718205680497" duration="1389000" />
+      <workItem from="1718225526040" duration="153000" />
+      <workItem from="1718354265636" duration="24000" />
     </task>
     <task id="LOCAL-00001" summary="Initialized">
       <option name="closed" value="true" />
@@ -116,7 +128,31 @@
       <option name="project" value="LOCAL" />
       <updated>1718134289396</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Many bug fixes and added terminate_timer">
+      <option name="closed" value="true" />
+      <created>1718206500777</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1718206500777</updated>
+    </task>
+    <task id="LOCAL-00007" summary="New files">
+      <option name="closed" value="true" />
+      <created>1718206629541</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1718206629541</updated>
+    </task>
+    <task id="LOCAL-00008" summary="New files">
+      <option name="closed" value="true" />
+      <created>1718206797155</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1718206797155</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -149,7 +185,8 @@
     <MESSAGE value="Initialized" />
     <MESSAGE value="fixed some sheet" />
     <MESSAGE value="Many bug fixes and added terminate_timer" />
-    <option name="LAST_COMMIT_MESSAGE" value="Many bug fixes and added terminate_timer" />
+    <MESSAGE value="New files" />
+    <option name="LAST_COMMIT_MESSAGE" value="New files" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BananaPanel$main.coverage" NAME="main Coverage Results" MODIFIED="1718203772314" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
