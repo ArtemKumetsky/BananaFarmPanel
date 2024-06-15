@@ -1,5 +1,7 @@
 import json
 import logging
+import os
+import sys
 import threading
 import pyautogui
 import time
@@ -9,15 +11,27 @@ import uuid
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-#connect firebase for check HWID
-cred = credentials.Certificate("SDK/bananapanel-firebase-adminsdk.json")
-firebase_admin.initialize_app(cred)
-
-db = firestore.client()
-
 # logs creation
 logging.basicConfig(filename='panel.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.DEBUG)
+
+
+# Получение пути к директории, где находится исполняемый файл
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller создает временную папку и сохраняет путь в _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
+# Инициализация Firebase
+cred = credentials.Certificate(resource_path("SDK/bananapanel-firebase-adminsdk.json"))
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 
 def getHWID():
@@ -44,6 +58,7 @@ def checkHWID():
 
 checkHWID()
 
+
 # read accounts data from logpass.txt and add them to temporary array
 def read_accounts(file_path):
     accounts = []
@@ -51,6 +66,7 @@ def read_accounts(file_path):
         for line in f:
             login, password = line.strip().split(':')
             accounts.append({"login": login, "password": password})
+
     return accounts
 
 
@@ -92,12 +108,11 @@ def find(image_path, timeout):
         print(f"{image_path} not detected! {e}")
 
 
-def delayed_kill(account):
-    pid = process_ids.get(account['login'])
+def delayed_kill(pid,login):
     print("Termination timer started, acc will be killed in " + str(terminate_timer) + " seconds")
     time.sleep(terminate_timer)
     subprocess.run(["taskkill", "/F", "/PID", str(pid)], check=True)
-    print(f"{account['login']} termination done!")
+    print(f"{login} termination done!")
 
 
 def login_and_launch_game(account):
@@ -138,7 +153,7 @@ def login_and_launch_game(account):
         print(f"{account['login']}: Logged into account!")
 
         # check cloud sync fail notification
-        find("assets/notifications/sync_failed.png", 10)
+        find("assets/notifications/sync_failed.png", 5)
 
         # close steam window
         find("assets/close_steam_window.png", 30)
@@ -152,7 +167,7 @@ def login_and_launch_game(account):
 
         # start terminate timer if it enabled in settings.json
         if terminate_timer > 0:
-            threading.Thread(target=delayed_kill, args=(account,)).start()
+            threading.Thread(target=delayed_kill, args=(steam_window.pid, account['login'])).start()
     except Exception as e:
         logging.error(f"Error in main function: {e}")
 
@@ -168,4 +183,4 @@ while True:
             logging.error(f"Error in main cycle: {e}")
 
 # compile
-# pyinstaller main.py --onefile
+# pyinstaller --onefile --name BananaPanel --add-data "SDK/bananapanel-firebase-adminsdk.json;SDK" main.py
