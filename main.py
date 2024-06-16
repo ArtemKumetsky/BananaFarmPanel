@@ -11,8 +11,6 @@ import uuid
 import firebase_admin
 from firebase_admin import credentials, firestore
 from colorama import init, Fore, Style
-from steam.client import SteamClient
-from pysteamsignin.steamsignin import SteamSignIn
 
 # Инициализация colorama
 init()
@@ -166,7 +164,6 @@ def launch_steam(account):
     except Exception as e:
         print("Error launching steam: " + str(e))
 
-
     # wait till steam launched
     steam_launch_error = find("assets/login/steam_launched.png", 30, 0)
     while steam_launch_error == 1:
@@ -211,6 +208,8 @@ def login_and_launch_game(account):
         # look for EULA
         find("assets/notifications/accept_eula.png", 10, 1)
 
+        # look for cloud error
+        find("assets/notifications/sync_failed.png", 5, 1)
         # look for game minimize game icon
         find("assets/game/minimize_game.png", 15, 1)
 
