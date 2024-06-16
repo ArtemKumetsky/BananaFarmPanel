@@ -1,5 +1,5 @@
 {
   "steam_path": "C:\\Farm\\Steam\\steam.exe",
-  "steam_launch_attributes": ["-silent", "-no-browser", "-language english"],
+  "steam_launch_attributes": ["-silent", "-no-browser"],
   "terminate_timer": 240
 }

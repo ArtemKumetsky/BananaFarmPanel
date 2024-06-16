@@ -10,6 +10,12 @@ from steam.guard import SteamAuthenticator
 import uuid
 import firebase_admin
 from firebase_admin import credentials, firestore
+from colorama import init, Fore, Style
+from steam.client import SteamClient
+from pysteamsignin.steamsignin import SteamSignIn
+
+# Инициализация colorama
+init()
 
 # logs creation
 logging.basicConfig(filename='panel.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s',
@@ -100,19 +106,6 @@ for account in accounts:
         logging.error("Check your mafiles! It will be renamed to accountLogin.mafile! Error: " + str(e))
         time.sleep(60)
 
-# Steam path
-with open('settings.json', 'r') as f:
-    config = json.load(f)
-
-
-steam_path = config['steam_path']
-game_id = "2923300"
-global steam_window, counter, terminate_timer, process_ids
-process_ids = {}
-counter: int = 0
-terminate_timer = config['terminate_timer']
-steam_launch_attributes = config['steam_launch_attributes']
-
 
 def get_steam_guard_code(mafile_path):
     with open(mafile_path, 'r') as f:
@@ -122,42 +115,82 @@ def get_steam_guard_code(mafile_path):
     return authenticator.get_code()
 
 
+# Parse settings.json
+with open('settings.json', 'r') as f:
+    config = json.load(f)
+
+# init variables
+steam_path = config['steam_path']
+game_id = "2923300"
+global steam_window, steam_launch_error
+process_ids = {}
+counter: int = 0
+terminate_timer = config['terminate_timer']
+steam_launch_attributes = config['steam_launch_attributes']
+
+
 def find(image_path, timeout, action):
-    print(f"looking for {image_path}...")
+    global steam_launch_error
+    print(Fore.YELLOW + f"looking for {image_path}...")
     try:
         location = pyautogui.locateOnScreen(image_path, timeout)
         if location is not None and action == 1:
             pyautogui.click(pyautogui.center(location))
-            print(f"{image_path} found! Closing...")
+            print(Fore.GREEN + f"{image_path} found! Closing...")
         if location is not None and action == 0:
             pyautogui.center(location)
-            print(f"{image_path} found!")
+            print(Fore.GREEN + f"{image_path} found!")
+            if image_path == "assets/login/steam_launched.png":
+                steam_launch_error = 0
+                return steam_launch_error
     except Exception as e:
-        print(f"{image_path} not detected! {e}")
+        print(Fore.RED + f"{image_path} not detected! {e}")
+        # if steam not launched, kill previous window and open a new one
+        if image_path == "assets/login/steam_launched.png":
+            steam_launch_error = 1
+            return steam_launch_error
 
 
-def delayed_kill(pid, login):
-    print("Termination timer started, acc will be killed in " + str(terminate_timer) + " seconds\n")
-    if terminate_timer > 0:
-        time.sleep(terminate_timer)
-    subprocess.run(["taskkill", "/F", "/PID", str(pid)], check=True)
-    print(f"{login} termination done!")
+def delayed_kill(pid, login, timer):
+    print("Termination timer started, acc will be killed in " + str(timer) + " seconds\n")
+    time.sleep(timer)
+    subprocess.run(["taskkill", "/F", "/T", "/PID", str(pid)], check=True)
+    print(Fore.YELLOW + f"{login} termination done!")
+
+
+def launch_steam(account):
+    try:
+        global steam_launch_error, steam_window
+        steam_window = subprocess.Popen([steam_path] + steam_launch_attributes + ["-applaunch", game_id])
+        process_ids[account['login']] = steam_window.pid
+    except Exception as e:
+        print("Error launching steam: " + str(e))
+
+
+    # wait till steam launched
+    steam_launch_error = find("assets/login/steam_launched.png", 30, 0)
+    while steam_launch_error == 1:
+        print(Fore.RED + "STEAM LAUNCHING ERROR! STEAM WILL BE RESTARTED.")
+        threading.Thread(target=delayed_kill, args=(steam_window.pid, account['login'], 1)).start()
+        time.sleep(5)
+        print(Fore.GREEN + f"Launching {account['login']}")
+        steam_window = subprocess.Popen([steam_path] + steam_launch_attributes + ["-applaunch", game_id])
+        process_ids[account['login']] = steam_window.pid
+        steam_launch_error = find("assets/login/steam_launched.png", 30, 0)
+    return steam_window.pid
 
 
 def login_and_launch_game(account):
     try:
+        global steam_window
         print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-        print(f"Launching {account['login']}")
+        print(Fore.GREEN + f"Launching {account['login']}")
+
         # get SDA code
         auth_code = get_steam_guard_code(account["mafile_path"])
 
-        # Launch steam
-        steam_window = subprocess.Popen([steam_path, "-applaunch", game_id] + steam_launch_attributes)
-        process_ids[account['login']] = steam_window.pid
-
-        # wait till steam launched
-        find("assets/login/steam_launched.png", 300, 0)
-        print(f"{account['login']}: Steam launched!")
+        # launch steam
+        launch_steam(account)
 
         # enter login
         pyautogui.write(account["login"])
@@ -166,52 +199,52 @@ def login_and_launch_game(account):
         # enter password
         pyautogui.write(account["password"])
         pyautogui.press("enter")
-        find("assets/login/sda_request.png", 300, 0)
+        find("assets/login/sda_request.png", 10, 0)
 
         # enter SDA code
         pyautogui.write(auth_code)
         pyautogui.press("enter")
 
-        # check game ban notification
-        find("assets/notifications/game_ban_window_close.png", 10, 1)
+        # look for game ban window and close it
+        find("assets/notifications/game_ban_window_close.png", 5, 1)
 
-        # check EULA
+        # look for EULA
         find("assets/notifications/accept_eula.png", 10, 1)
 
-        # continue
-        pyautogui.locateOnScreen("assets/login/steam_logged_in.png", 300)
-        print(f"{account['login']}: Logged into account!")
+        # look for game minimize game icon
+        find("assets/game/minimize_game.png", 15, 1)
 
-        # check cloud sync fail notification
-        find("assets/notifications/sync_failed.png", 5, 1)
-
-        # close steam window
-        find("assets/close_steam_window.png", 30, 1)
-
-        # Check game launch
-        find("assets/game_launched.png", 300, 0)
-        print(f"{account['login']}: Game launched!")
-
-        # minimize game
-        find("assets/minimize_game.png", 300, 1)
+        # close steam
+        find("assets/login/steam_minimize.png", 5, 1)
 
         # start terminate timer if it enabled in settings.json
         if terminate_timer > 0:
-            threading.Thread(target=delayed_kill, args=(steam_window.pid, account['login'])).start()
+            threading.Thread(target=delayed_kill, args=(steam_window.pid, account['login'], terminate_timer)).start()
     except Exception as e:
         logging.error(f"Error in main function: {e}")
 
 
-while True:
+# if terminate_timer == 0, steam will not close, so we shouldn`t launch 1 acc second time
+if terminate_timer > 0:
+    while True:
+        for account in accounts:
+            try:
+                print(Fore.WHITE + "--------------------------------------------------------------------")
+                login_and_launch_game(account)
+                counter = counter + 1
+                print(Fore.WHITE + "--------------------------------------------------------------------")
+                print(Fore.LIGHTGREEN_EX + "accounts launched: " + str(counter))
+            except Exception as e:
+                logging.error(Fore.RED + f"Error in main cycle: {e}")
+else:
     for account in accounts:
         try:
-            print("--------------------------------------------------------------------")
+            print(Fore.WHITE + "--------------------------------------------------------------------")
             login_and_launch_game(account)
             counter = counter + 1
-            print("--------------------------------------------------------------------")
-            print("accounts launched: " + str(counter))
+            print(Fore.WHITE + "--------------------------------------------------------------------")
+            print(Fore.LIGHTGREEN_EX + "accounts launched: " + str(counter))
         except Exception as e:
-            logging.error(f"Error in main cycle: {e}")
-
+            logging.error(Fore.RED + f"Error in main cycle: {e}")
 # compile
 # pyinstaller --onefile --name BananaPanel --add-data "SDK/bananapanel-firebase-adminsdk.json;SDK" main.py
