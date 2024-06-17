@@ -1,4 +1,4 @@
-('C:\\Users\\Farmer\\Desktop\\RawDEBUG\\BananaPanel\\Bananapanel\\build\\BananaPanel\\PYZ-00.pyz',
+('C:\\Users\\Farmer\\Desktop\\RawDEBUG\\BananaPanel\\bananapanel\\build\\BananaPanel\\PYZ-00.pyz',
  [('Cryptodome',
    'C:\\Users\\Farmer\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\Cryptodome\\__init__.py',
    'PYMODULE'),

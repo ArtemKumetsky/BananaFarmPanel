@@ -1,5 +1,7 @@
 {
   "steam_path": "C:\\Farm\\Steam\\steam.exe",
   "steam_launch_attributes": ["-silent", "-no-browser", "-noverifyfiles", "-nobootstrapupdate", "-skipinitialbootstrap", "-overridepackageurl"],
-  "terminate_timer": 240
+  "terminate_timer": 240,
+  "loop": 1,
+  "farm_additional_games": 0
 }

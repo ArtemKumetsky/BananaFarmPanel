@@ -132,6 +132,11 @@ def find(image_path, timeout, action):
     print(Fore.YELLOW + f"looking for {image_path}...")
     try:
         location = pyautogui.locateOnScreen(image_path, timeout)
+        if location is not None and action == 2:
+            pyautogui.click(pyautogui.center(location))
+            time.sleep(1)
+            pyautogui.doubleClick(pyautogui.center(location))
+            print(Fore.GREEN + f"{image_path} found! Closing...")
         if location is not None and action == 1:
             pyautogui.click(pyautogui.center(location))
             print(Fore.GREEN + f"{image_path} found! Closing...")
@@ -160,7 +165,8 @@ def launch_steam(account):
     try:
         global steam_launch_error, steam_window
         steam_window = subprocess.Popen([steam_path] + steam_launch_attributes + ["-applaunch", game_id])
-        process_ids[account['login']] = steam_window.pid
+        process_ids[account['login']] = steam_window
+
     except Exception as e:
         print("Error launching steam: " + str(e))
 
@@ -175,6 +181,30 @@ def launch_steam(account):
         process_ids[account['login']] = steam_window.pid
         steam_launch_error = find("assets/login/steam_launched.png", 30, 0)
     return steam_window.pid
+
+
+def launch_additional_games():
+    # go to library
+    find("assets/game/library_btn.png", 20, 1)
+    # launch cats
+    find("assets/game/cats_app.png", 10, 2)
+    # look for EULA
+    find("assets/notifications/accept_eula.png", 5, 1)
+
+    # look for cloud error
+    find("assets/notifications/sync_failed.png", 5, 1)
+    # look for game minimize game icon
+    find("assets/game/minimize_game.png", 15, 1)
+
+    # launch egg
+    find("assets/game/egg_app.png", 5, 1)
+    # look for EULA
+    find("assets/notifications/accept_eula.png", 5, 1)
+
+    # look for cloud error
+    find("assets/notifications/sync_failed.png", 5, 1)
+    # look for game minimize game icon
+    find("assets/game/minimize_game.png", 15, 1)
 
 
 def login_and_launch_game(account):
@@ -213,6 +243,9 @@ def login_and_launch_game(account):
         # look for game minimize game icon
         find("assets/game/minimize_game.png", 15, 1)
 
+        if config['farm_additional_games'] == 1:
+            launch_additional_games()
+
         # close steam
         find("assets/login/steam_minimize.png", 5, 1)
 
@@ -224,7 +257,7 @@ def login_and_launch_game(account):
 
 
 # if terminate_timer == 0, steam will not close, so we shouldn`t launch 1 acc second time
-if terminate_timer > 0:
+if config['loop'] == 1:
     while True:
         for account in accounts:
             try:
