@@ -133,8 +133,6 @@ def find(image_path, timeout, action):
     try:
         location = pyautogui.locateOnScreen(image_path, timeout)
         if location is not None and action == 2:
-            pyautogui.click(pyautogui.center(location))
-            time.sleep(1)
             pyautogui.doubleClick(pyautogui.center(location))
             print(Fore.GREEN + f"{image_path} found! Closing...")
         if location is not None and action == 1:
@@ -197,7 +195,7 @@ def launch_additional_games():
     find("assets/game/minimize_game.png", 15, 1)
 
     # launch egg
-    find("assets/game/egg_app.png", 5, 1)
+    find("assets/game/egg_app.png", 5, 2)
     # look for EULA
     find("assets/notifications/accept_eula.png", 5, 1)
 
@@ -205,7 +203,6 @@ def launch_additional_games():
     find("assets/notifications/sync_failed.png", 5, 1)
     # look for game minimize game icon
     find("assets/game/minimize_game.png", 15, 1)
-
 
 def login_and_launch_game(account):
     try:
@@ -234,6 +231,10 @@ def login_and_launch_game(account):
 
         # look for game ban window and close it
         find("assets/notifications/game_ban_window_close.png", 5, 1)
+
+        # look for friends UI window
+        find("assets/notifications/friends_window_close.png", 10, 1)
+        find("assets/notifications/active_friends_window_close.png", 5, 1)
 
         # look for EULA
         find("assets/notifications/accept_eula.png", 10, 1)
