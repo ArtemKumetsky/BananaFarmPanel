@@ -11,6 +11,8 @@ import uuid
 import firebase_admin
 from firebase_admin import credentials, firestore
 from colorama import init, Fore, Style
+import pygetwindow as gw
+from pywinauto.application import Application
 
 # Инициализация colorama
 init()
@@ -125,10 +127,11 @@ process_ids = {}
 counter: int = 0
 terminate_timer = config['terminate_timer']
 steam_launch_attributes = config['steam_launch_attributes']
+limit_sleep_timer = config['limit_sleep_timer']
 
 
 def find(image_path, timeout, action):
-    global steam_launch_error
+    global steam_launch_error, steam_rate_limit
     print(Fore.YELLOW + f"looking for {image_path}...")
     try:
         location = pyautogui.locateOnScreen(image_path, timeout)
@@ -144,6 +147,9 @@ def find(image_path, timeout, action):
             if image_path == "assets/login/steam_launched.png":
                 steam_launch_error = 0
                 return steam_launch_error
+        if location is not None and action == "detect":
+            steam_rate_limit = 1
+            return steam_rate_limit
     except Exception as e:
         print(Fore.RED + f"{image_path} not detected! {e}")
         # if steam not launched, kill previous window and open a new one
@@ -159,63 +165,50 @@ def delayed_kill(pid, login, timer):
     print(Fore.YELLOW + f"{login} termination done!")
 
 
+def window_listener(title, scenario):
+    # get windows list
+    windows = gw.getAllWindows()
+
+    # search for window and close it
+    if scenario == "close":
+        for window in windows:
+            if title in window.title:
+                print("searching for window " + window.title)
+                print(title + " closed!")
+                window.close()
+                return True
+        print(title + " not found!")
+        return False
+    elif scenario == "focus":
+        for window in windows:
+            if title in window.title:
+                # Активируем окно и выводим его на передний план
+                app = Application().connect(handle=window._hWnd)
+                app_window = app.window(handle=window._hWnd)
+                app_window.set_focus()
+                return True
+        return False
+    elif scenario == "minimize":
+        for window in windows:
+            if title in window.title:
+                # Активируем окно и выводим его на передний план
+                app = Application().connect(handle=window._hWnd)
+                app_window = app.window(handle=window._hWnd)
+                app_window.minimize()
+                return True
+        return False
+
+
 def launch_steam(account):
     try:
-        global steam_launch_error, steam_window
+        global steam_launch_error, steam_window, steam_rate_limit
         steam_window = subprocess.Popen([steam_path] + steam_launch_attributes + ["-applaunch", game_id])
         process_ids[account['login']] = steam_window
 
-    except Exception as e:
-        print("Error launching steam: " + str(e))
-
-    # wait till steam launched
-    steam_launch_error = find("assets/login/steam_launched.png", 30, 0)
-    while steam_launch_error == 1:
-        print(Fore.RED + "STEAM LAUNCHING ERROR! STEAM WILL BE RESTARTED.")
-        threading.Thread(target=delayed_kill, args=(steam_window.pid, account['login'], 1)).start()
-        time.sleep(5)
-        print(Fore.GREEN + f"Launching {account['login']}")
-        steam_window = subprocess.Popen([steam_path] + steam_launch_attributes + ["-applaunch", game_id])
-        process_ids[account['login']] = steam_window.pid
+        # wait till steam launched
         steam_launch_error = find("assets/login/steam_launched.png", 30, 0)
-    return steam_window.pid
 
-
-def launch_additional_games():
-    # go to library
-    find("assets/game/library_btn.png", 20, 1)
-    # launch cats
-    find("assets/game/cats_app.png", 10, 2)
-    # look for EULA
-    find("assets/notifications/accept_eula.png", 5, 1)
-
-    # look for cloud error
-    find("assets/notifications/sync_failed.png", 5, 1)
-    # look for game minimize game icon
-    find("assets/game/minimize_game.png", 15, 1)
-
-    # launch egg
-    find("assets/game/egg_app.png", 5, 2)
-    # look for EULA
-    find("assets/notifications/accept_eula.png", 5, 1)
-
-    # look for cloud error
-    find("assets/notifications/sync_failed.png", 5, 1)
-    # look for game minimize game icon
-    find("assets/game/minimize_game.png", 15, 1)
-
-def login_and_launch_game(account):
-    try:
-        global steam_window
-        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-        print(Fore.GREEN + f"Launching {account['login']}")
-
-        # get SDA code
-        auth_code = get_steam_guard_code(account["mafile_path"])
-
-        # launch steam
-        launch_steam(account)
-
+        # login to steam
         # enter login
         pyautogui.write(account["login"])
         pyautogui.press("tab")
@@ -225,51 +218,99 @@ def login_and_launch_game(account):
         pyautogui.press("enter")
         find("assets/login/sda_request.png", 10, 0)
 
+        window_listener("Sing in to Steam", "focus")
+        steam_rate_limit = find("assets/login/limit.png", 2, "detect")
+
         # enter SDA code
-        pyautogui.write(auth_code)
+        pyautogui.write(get_steam_guard_code(account["mafile_path"]))
         pyautogui.press("enter")
 
-        # look for game ban window and close it
-        find("assets/notifications/game_ban_window_close.png", 5, 1)
+        while steam_launch_error == 1:
+            print(Fore.RED + "STEAM LAUNCHING ERROR! STEAM WILL BE RESTARTED.")
+            threading.Thread(target=delayed_kill, args=(steam_window.pid, account['login'], 1)).start()
+            time.sleep(5)
+            launch_steam(account)
 
-        # look for friends UI window
-        find("assets/notifications/friends_window_close.png", 10, 1)
-        find("assets/notifications/active_friends_window_close.png", 5, 1)
+        while steam_rate_limit == 1:
+            print("Rate limit detected! Sleeping for " + limit_sleep_timer)
+            threading.Thread(target=delayed_kill, args=(steam_window.pid, account['login'], 1)).start()
+            time.sleep(limit_sleep_timer)
+            launch_steam(account)
 
-        # look for EULA
+    except Exception as e:
+        print("Error launching steam: " + str(e))
+
+    return steam_window.pid
+
+
+def launch_additional_games():
+    # go to library
+    find("assets/game/library_btn.png", 20, 1)
+    # launch cats
+    find("assets/game/cats_app.png", 10, 2)
+    # look for cloud error
+    find("assets/notifications/sync_failed.png", 5, 1)
+    # look for game minimize game icon
+    window_listener("Cats", "minimize")
+
+    # launch egg
+    find("assets/game/egg_app.png", 5, 2)
+    # look for cloud error
+    find("assets/notifications/sync_failed.png", 5, 1)
+    # look for game minimize game icon
+    window_listener("Egg", "minimize")
+
+
+def close_garbage():
+    print("Closing steam windows...")
+    window_listener("Steam", "close")
+    window_listener("Support Message", "close")
+    window_listener("Friends List", "close")
+    window_listener("Special offers", "close")
+    find("assets/notifications/game_ban_window_close.png", 5, 1)
+
+
+def login_and_launch_game(account):
+    try:
+        global steam_window
+        print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+        print(Fore.GREEN + f"Launching {account['login']}")
+
+        # launch steam
+        launch_steam(account)
+
+        # wait steam load
+        find("assets/notifications/eula.png", 10, 0)
+
+        # focus on steam
+        while not window_listener("Steam", "focus"):
+            time.sleep(1)
+            window_listener("Steam", "focus")
+        print("steam is in focus now!")
+
+        # accept EULA
         find("assets/notifications/accept_eula.png", 10, 1)
 
         # look for cloud error
         find("assets/notifications/sync_failed.png", 5, 1)
-        # look for game minimize game icon
-        find("assets/game/minimize_game.png", 15, 1)
+
+        # minimize game
+        window_listener("Banana", "minimize")
 
         if config['farm_additional_games'] == 1:
             launch_additional_games()
 
-        # close steam
-        find("assets/login/steam_minimize.png", 5, 1)
-
         # start terminate timer if it enabled in settings.json
         if terminate_timer > 0:
             threading.Thread(target=delayed_kill, args=(steam_window.pid, account['login'], terminate_timer)).start()
+
+        # close steam windows
+        close_garbage()
     except Exception as e:
         logging.error(f"Error in main function: {e}")
 
 
-# if terminate_timer == 0, steam will not close, so we shouldn`t launch 1 acc second time
-if config['loop'] == 1:
-    while True:
-        for account in accounts:
-            try:
-                print(Fore.WHITE + "--------------------------------------------------------------------")
-                login_and_launch_game(account)
-                counter = counter + 1
-                print(Fore.WHITE + "--------------------------------------------------------------------")
-                print(Fore.LIGHTGREEN_EX + "accounts launched: " + str(counter))
-            except Exception as e:
-                logging.error(Fore.RED + f"Error in main cycle: {e}")
-else:
+def main_cycle():
     for account in accounts:
         try:
             print(Fore.WHITE + "--------------------------------------------------------------------")
@@ -279,5 +320,13 @@ else:
             print(Fore.LIGHTGREEN_EX + "accounts launched: " + str(counter))
         except Exception as e:
             logging.error(Fore.RED + f"Error in main cycle: {e}")
+
+
+# if terminate_timer == 0, steam will not close, so we shouldn`t launch 1 acc second time
+if config['loop'] == 1:
+    while True:
+        main_cycle()
+else:
+    main_cycle()
 # compile
 # pyinstaller --onefile --name BananaPanel --add-data "SDK/bananapanel-firebase-adminsdk.json;SDK" main.py
