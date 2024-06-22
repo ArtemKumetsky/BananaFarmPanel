@@ -128,6 +128,7 @@ counter: int = 0
 terminate_timer = config['terminate_timer']
 steam_launch_attributes = config['steam_launch_attributes']
 limit_sleep_timer = config['limit_sleep_timer']
+steam_wait_time = config['steam_wait_time']
 
 
 def find(image_path, timeout, action):
@@ -206,7 +207,15 @@ def launch_steam(account):
         process_ids[account['login']] = steam_window
 
         # wait till steam launched
-        steam_launch_error = find("assets/login/steam_launched.png", 30, 0)
+        steam_launch_error = find("assets/login/steam_launched.png", steam_wait_time, 0)
+
+
+
+        while steam_launch_error == 1:
+            print(Fore.RED + "STEAM LAUNCHING ERROR! STEAM WILL BE RESTARTED.")
+            threading.Thread(target=delayed_kill, args=(steam_window.pid, account['login'], 1)).start()
+            time.sleep(5)
+            launch_steam(account)
 
         # login to steam
         # enter login
@@ -218,18 +227,12 @@ def launch_steam(account):
         pyautogui.press("enter")
         find("assets/login/sda_request.png", 10, 0)
 
-        window_listener("Sing in to Steam", "focus")
-        steam_rate_limit = find("assets/login/limit.png", 2, "detect")
-
         # enter SDA code
         pyautogui.write(get_steam_guard_code(account["mafile_path"]))
         pyautogui.press("enter")
 
-        while steam_launch_error == 1:
-            print(Fore.RED + "STEAM LAUNCHING ERROR! STEAM WILL BE RESTARTED.")
-            threading.Thread(target=delayed_kill, args=(steam_window.pid, account['login'], 1)).start()
-            time.sleep(5)
-            launch_steam(account)
+        window_listener("Sing in to Steam", "focus")
+        steam_rate_limit = find("assets/login/limit.png", 2, "detect")
 
         while steam_rate_limit == 1:
             print("Rate limit detected! Sleeping for " + limit_sleep_timer)
@@ -287,6 +290,8 @@ def login_and_launch_game(account):
             time.sleep(1)
             window_listener("Steam", "focus")
         print("steam is in focus now!")
+        time.sleep(2)
+        window_listener("Friends List", "close")
 
         # accept EULA
         find("assets/notifications/accept_eula.png", 10, 1)

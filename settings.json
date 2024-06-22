@@ -5,5 +5,6 @@
   "loop": 1,
   "farm_additional_games": 1,
   "game_id": 2923300,
-  "limit_sleep_timer": 180
+  "limit_sleep_timer": 180,
+  "steam_wait_time": 30
 }
